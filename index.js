@@ -20,8 +20,10 @@ const SFI_POOL_CONTRACT="0x990Fd37852b6123B376bCe814BC08192148ef9Aa"
 //smart contract objects
 const dinoFarmContract = new web3.eth.Contract(DINO_FARM_ABI, DINO_FARM_CONTRACT)
 const dinoPoolContract = new web3.eth.Contract(DINO_POOL_ABI, DINO_POOL_CONTRACT)
+const ustPoolContract = new web3.eth.Contract(UST_POOL_ABI, UST_POOL_CONTRACT)
 const sfiPoolContract = new web3.eth.Contract(SFI_POOL_ABI, SFI_POOL_CONTRACT)
 
+const poolContractToUse = sfiPoolContract
 const farmID = 10
 
 let currently_compounding = false
@@ -35,11 +37,11 @@ async function checkCompoundingOpportunities(){
         const txCost = web3.utils.fromWei(gasPrice.toString(),'ether') * gasLimit
         
         //if the dino to be excavated is more than the transaction cost (assumes 1 DINO>1 MATIC)
-        if(pendingDino > 4 * txCost) {
+        if(pendingDino > 5 * txCost) {
             console.log(`time to compound ${web3.utils.fromWei(pendingDino.toString(),'ether')} DINO!`)
             currently_compounding = true
             console.log(`gas Price: ${gasPrice}`)
-            compound(pendingDino, dinoPoolContract, gasPrice, gasLimit)
+            compound(pendingDino, poolContractToUse, gasPrice, gasLimit)
         }
         else{
             console.log(`not ready to compound ${web3.utils.fromWei(pendingDino.toString(),'ether')} DINO`)
@@ -91,6 +93,7 @@ async function compound(pendingDino, poolContract, gasPrice, gasLimit){
 
 
 checkCompoundingOpportunities()
-const POLLING_INTERVAL = 240000 // 4 minutes 
+const POLLING_INTERVAL = 1260000 // 21 minutes 
 setInterval(async () => { await checkCompoundingOpportunities() }, POLLING_INTERVAL)
+
 
