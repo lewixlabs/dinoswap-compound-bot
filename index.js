@@ -1,5 +1,6 @@
 require('dotenv').config()
 const Web3 = require('web3')
+const Utilities = require('./utilities')
 
 //WEB3 Config
 const web3 = new Web3(process.env.RPC_URL)
@@ -29,6 +30,9 @@ const farmID = 10
 let currently_compounding = false
 
 async function checkCompoundingOpportunities(){
+
+    Utilities.logTime()
+
     if(currently_compounding) return
     try{
         const pendingDino = await dinoFarmContract.methods.pendingDino(farmID, wallet.address).call()
